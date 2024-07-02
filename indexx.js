@@ -1,3 +1,6 @@
-const commaSeparatedString = "apple,banana,orange";
-const fruitsArray = commaSeparatedString.split(",");
-console.log(fruitsArray); // Output: ["apple", "banana", "orange"]
+const person = {
+  name: "John",
+  age: 30,
+  occupation: "Engineer"
+};
+console.log(!person['ag'])

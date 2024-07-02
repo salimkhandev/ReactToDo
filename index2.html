@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Break Example</title>
+    <style>
+        .container {
+            width: 300px; /* Fixed width container */
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 20px auto;
+        }
+        .break-word {
+          ///Break words to fit the container
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .keep-all {
+            word-break: keep-all; /* Keep words together */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .break-all {
+            /* word-break: break-all; Break all text to fit the container */
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="break-word">
+            Thisisaverylongwordthatwillneedtobreaktomaintainthelayout.
+        </div>
+        <div class="keep-all">
+            This is a very long text that will try to keep all words together and will overflow the container.
+        </div>
+        <div class="break-all">
+            This is a very long text that will break all text to fit within the container.
+        </div>
+    </div>
+</body>
+</html>
