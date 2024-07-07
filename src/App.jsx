@@ -19,7 +19,7 @@ export default function App() {
   const [notes, setNotes] = useState([]);
   const [check, setCheck] = useState();
   const [search, setSearch] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [reset, setReset] = useState(false);
 
   const [completedNotes, setCompletedNotes] = useState({});
@@ -229,6 +229,8 @@ export default function App() {
               display: reset || notes.length === 0 ? "none" : "inline-flex",
               px: 1,
               py: 1,
+              p: 0.5,
+              m: 1,
               borderRadius: "0.5rem",
               color: "#d32f2f",
               "&:hover": {
@@ -247,6 +249,7 @@ export default function App() {
               display: reset || notes.length === 0 ? "none" : "inline-flex",
               px: 1,
               py: 1,
+              p: 0.5,
               borderRadius: "0.5rem",
               color: "green",
               "&:hover": {
@@ -283,19 +286,17 @@ export default function App() {
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
                     size="small"
-                    sx={{ flex: 1, marginRight: 2}}
+                    sx={{ flex: 1, marginRight: 2 }}
                     InputProps={{
                       style: {
-                        color: darkMode? "white":"black", // This will also change the input text color
-                      border:'2px solid green'
+                        color: darkMode ? "white" : "black", // This will also change the input text color
+                        border: "2px solid green",
                       },
-
-
                     }}
                   />
                 ) : (
                   <span
-                    className={`flex-auto min-w-0 max-w-full break-words border border-gray-300 m-1 p-2 ${
+                    className={`flex-auto min-w-0 max-w-full break-words  m-1 p-2 ${
                       completedNotes[key]
                         ? "line-through font-bold text-green-500"
                         : ""
