@@ -21,7 +21,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => {
     const storedDarkMode = localStorage.getItem("darkMode");
-    const booleanForm=JSON.parse(storedDarkMode)
+    const booleanForm = JSON.parse(storedDarkMode);
 
     return storedDarkMode ? booleanForm : false;
   });
@@ -61,7 +61,7 @@ export default function App() {
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire("Deleted!", "Your item has been deleted.", "success");
+        Swal.fire("Deleted!", "Your all notes has been deleted.", "success");
         localStorage.removeItem("ReactTodo");
         localStorage.removeItem("checkCompleted");
         setCompletedNotes({});
@@ -71,42 +71,49 @@ export default function App() {
     });
   };
 
-  const hasCompletedNotes = () => {
-    return Object.values(completedNotes).some((completed) => completed);
-  };
-
-
   const onDelete = (note, key) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this note?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const deletes = notes.filter((item) => item !== note);
-        setNotes(deletes);
 
-        localStorage.setItem("ReactTodo", deletes.join(","));
-        setCompletedNotes((prev) => {
-          const updateState = {
-            ...prev,
-            [key]: false,
-          };
 
-          localStorage.setItem("checkCompleted", JSON.stringify(updateState));
-          return updateState;
-        });
+Swal.fire({
+  title: "Are you sure?",
+  text: "Do you want to delete this note?",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!",
+  customClass: {
+    title: "text-lg", // Tailwind class for larger text
+    content: "text-sm", // Tailwind class for smaller text
+    popup: "w-80", // Tailwind class for width
+  },
+}).then((result) => {
+  if (result.isConfirmed) {
+    
+   const deletes = notes.filter((item) => item !== note);
+   setNotes(deletes);
 
-        setSnackbar({ open: true, message: "Note deleted" });
-      }
-    });
+   localStorage.setItem("ReactTodo", deletes.join(","));
+   setCompletedNotes((prev) => {
+     const updateState = {
+       ...prev,
+       [key]: false,
+     };
+
+     localStorage.setItem("checkCompleted", JSON.stringify(updateState));
+     return updateState;
+   });
+
+   setSnackbar({ open: true, message: "Note deleted" });
+  
+  }
+});
+
+
   };
 
   const handleCheckboxChange = (key) => {
+
     setCompletedNotes((prev) => {
       const updateState = {
         ...prev,
@@ -122,15 +129,20 @@ export default function App() {
     setSearch(e.target.value);
   };
 
-  const filtered = notes.filter((item) => {
-    if (showCompleted) {
-      return (
-        completedNotes[notes.indexOf(item)] &&
-        item.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-    return item.toLowerCase().includes(search.toLowerCase());
-  });
+  const filtered = notes
+    .map((note, index) => ({ note, index }))
+    .filter(({ note, index }) => {
+      if (showCompleted) {
+        return (
+          completedNotes[index] &&
+          note.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      return note.toLowerCase().includes(search.toLowerCase());
+    });
+
+
+  
   console.log("The filtered items are ", filtered);
 
   const toSubmit = (e) => {
@@ -194,9 +206,15 @@ export default function App() {
     });
   };
 
+  // Helper function to check if there are any completed notes
+  const hasCompletedNotes = () => {
+    return Object.values(completedNotes).some((completed) => completed);
+    
+  };
+
   return (
     <div
-      className={` ${
+      className={`${
         darkMode ? `bg-gray-900 text-white` : `bg-gray-300 text-black`
       }`}
     >
@@ -241,7 +259,9 @@ export default function App() {
                 type="submit"
                 className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
-                <AddTaskIcon className="pr-1" /> Add
+                <div className="flex">
+                  <AddTaskIcon className="pr-1" /> Add
+                  </div> 
               </button>
             </div>
             <div className="flex items-center bg-white mb-2 border rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
@@ -285,10 +305,7 @@ export default function App() {
 
           {hasCompletedNotes() && (
             <Button
-              style={{
-                margin: "6px",
-      
-              }}
+              style={{ margin: "6px" }}
               sx={{
                 display: reset || notes.length === 0 ? "none" : "inline-flex",
                 px: 1,
@@ -312,21 +329,21 @@ export default function App() {
             </Button>
           )}
           <ul>
-            {filtered.map((note, key) => (
+            {filtered.map(({ note, index }) => (
               <li
                 className="flex justify-between items-center p-2 border-b last:border-b-0"
-                key={key}
+                key={index}
               >
                 <div className="flex">
-                  <span className="pr-1">{key + 1}</span>
+                  <span className="pr-1">{index + 1}</span>
                   <input
                     type="checkbox"
                     className="mr-2"
-                    checked={completedNotes[key]}
-                    onChange={() => handleCheckboxChange(key)}
+                    checked={completedNotes[index]}
+                    onChange={() => handleCheckboxChange(index)}
                   />
                 </div>
-                {editing === key ? (
+                {editing === index ? (
                   <TextField
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
@@ -342,7 +359,7 @@ export default function App() {
                 ) : (
                   <span
                     className={`flex-auto min-w-0 max-w-full break-words m-1 p-2 ${
-                      completedNotes[key]
+                      completedNotes[index]
                         ? "line-through font-bold text-green-500"
                         : ""
                     }`}
@@ -351,9 +368,9 @@ export default function App() {
                   </span>
                 )}
                 <div className="flex">
-                  {editing === key ? (
+                  {editing === index ? (
                     <IconButton
-                      onClick={() => handleSave(key)}
+                      onClick={() => handleSave(index)}
                       size="small"
                       sx={{ color: "#4caf50" }}
                     >
@@ -361,7 +378,7 @@ export default function App() {
                     </IconButton>
                   ) : (
                     <IconButton
-                      onClick={() => handleEdit(key)}
+                      onClick={() => handleEdit(index)}
                       size="small"
                       sx={{ color: "#1976d2" }}
                     >
@@ -369,7 +386,7 @@ export default function App() {
                     </IconButton>
                   )}
                   <IconButton
-                    onClick={() => onDelete(note, key)}
+                    onClick={() => onDelete(note, index)}
                     size="small"
                     sx={{ color: "#f44336" }}
                   >
