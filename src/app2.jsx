@@ -21,9 +21,9 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => {
     const storedDarkMode = localStorage.getItem("darkMode");
-    const booleanForm=JSON.parse(storedDarkMode)
-
-    return storedDarkMode ? booleanForm : false;
+    console.log("this is the string form ",storedDarkMode);
+    return storedDarkMode ? JSON.parse(storedDarkMode) : true;
+    // console.log("this is the string form ",storedDarkMode);
   });
   const [reset, setReset] = useState(false);
 
@@ -70,11 +70,6 @@ export default function App() {
       }
     });
   };
-
-  const hasCompletedNotes = () => {
-    return Object.values(completedNotes).some((completed) => completed);
-  };
-
 
   const onDelete = (note, key) => {
     Swal.fire({
@@ -219,6 +214,8 @@ export default function App() {
               color="primary"
               startIcon={
                 darkMode ? (
+
+            
                   <WbSunnyIcon style={{ color: "white" }} />
                 ) : (
                   <DarkModeIcon style={{ color: "gray" }} />
@@ -282,35 +279,29 @@ export default function App() {
           >
             Clear all notes
           </Button>
-
-          {hasCompletedNotes() && (
-            <Button
-              style={{
-                margin: "6px",
-      
-              }}
-              sx={{
-                display: reset || notes.length === 0 ? "none" : "inline-flex",
-                px: 1,
-                py: 1,
-                p: 0.5,
-                borderRadius: "0.5rem",
-                color: "green",
-                "&:hover": {
-                  backgroundColor: "#66bb6a",
-                  color: "black",
-                },
-                border: "1px solid green",
-              }}
-              variant="outlined"
-              color="success"
-              onClick={() => {
-                setShowCompleted(!showCompleted);
-              }}
-            >
-              {showCompleted ? "Show all" : "Show Completed"}
-            </Button>
-          )}
+          <Button
+            style={{ margin: "6px" }}
+            sx={{
+              display: reset || notes.length === 0 ? "none" : "inline-flex",
+              px: 1,
+              py: 1,
+              p: 0.5,
+              borderRadius: "0.5rem",
+              color: "green",
+              "&:hover": {
+                backgroundColor: "#66bb6a",
+                color: "black",
+              },
+              border: "1px solid green",
+            }}
+            variant="outlined"
+            color="success"
+            onClick={() => {
+              setShowCompleted(!showCompleted);
+            }}
+          >
+            {showCompleted ? "Show all" : "Show Completed"}
+          </Button>
           <ul>
             {filtered.map((note, key) => (
               <li
