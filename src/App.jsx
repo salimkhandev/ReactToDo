@@ -22,10 +22,20 @@ export default function App() {
   const [check, setCheck] = useState();
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(() => {
-    const storedDarkMode = localStorage.getItem("darkMode");
-    const booleanForm = JSON.parse(storedDarkMode);
 
-    return storedDarkMode ? booleanForm : false;
+
+ const storedDarkMode = localStorage.getItem('darkMode');
+    if (storedDarkMode !== null) {
+
+      console.log("this is the stored value",storedDarkMode);
+      return storedDarkMode === 'true';
+
+
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+
+
   });
   const [reset, setReset] = useState(false);
 
@@ -36,6 +46,7 @@ export default function App() {
   const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
+
     const locals = localStorage.getItem("ReactTodo");
     const checkCompleted = localStorage.getItem("checkCompleted");
     if (locals) {
@@ -247,6 +258,7 @@ Swal.fire({
               onClick={handleDarkModeToggle}
               className="pl-2 float-right"
             />
+        
           </div>
           <form onSubmit={toSubmit} className="mb-4">
             <div className="flex items-center mb-2">
