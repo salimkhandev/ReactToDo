@@ -2,6 +2,8 @@ import AddTaskIcon from "@mui/icons-material/AddTask";
 import ClearIcon from "@mui/icons-material/Clear";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
+
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
@@ -344,16 +346,16 @@ Swal.fire({
                   />
                 </div>
                 {editing === index ? (
-                  <TextField
+                  <BaseTextareaAutosize
+                    minRows={3}
+                    placeholder="Edit here"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                    size="small"
-                    sx={{ flex: 1, marginRight: 2 }}
-                    InputProps={{
-                      style: {
-                        color: darkMode ? "white" : "black",
-                        border: "2px solid green",
-                      },
+                    style={{
+                      color: darkMode ? "black" : "black",
+                      border: "2px solid green",
+                      padding: "8px",
+                      width: "100%",
                     }}
                   />
                 ) : (
