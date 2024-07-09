@@ -261,7 +261,7 @@ Swal.fire({
               >
                 <div className="flex">
                   <AddTaskIcon className="pr-1" /> Add
-                  </div> 
+                </div>
               </button>
             </div>
             <div className="flex items-center bg-white mb-2 border rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
@@ -358,9 +358,9 @@ Swal.fire({
                   />
                 ) : (
                   <span
-                    className={`flex-auto min-w-0 max-w-full break-words m-1 p-2 ${
+                    className={`flex-auto min-w-0 max-w-full break-words m-1 p-2  text-left ${
                       completedNotes[index]
-                        ? "line-through font-bold text-green-500"
+                        ? "line-through font-bold  decoration-black decoration-3"
                         : ""
                     }`}
                   >
