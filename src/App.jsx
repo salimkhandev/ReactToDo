@@ -1,21 +1,23 @@
+import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import ClearIcon from "@mui/icons-material/Clear";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
+import Checkbox from '@mui/material/Checkbox';
 import Snackbar from "@mui/material/Snackbar";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "./App.css"; // Make sure to import your CSS file
-import { red } from "@mui/material/colors";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -226,198 +228,241 @@ Swal.fire({
   };
 
   return (
-    <div
-      className={`${
-        darkMode ? `bg-gray-900 text-white` : `bg-gray-300 text-black`
-      }`}
-    >
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div
-          className={`p-6 rounded-lg shadow-lg w-full max-w-md ${
-            darkMode ? `bg-gray-800 text-white` : `bg-gray-100 text-black`
-          }`}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h1
-              style={{ fontFamily: "'Saira Condensed', sans-serif" }}
-              className="text-2xl font-bold mb-4 text-center"
-            >
-              TaskTame
-            </h1>
-            <Button
-              variant="text"
-              size="small"
-              color="primary"
-              startIcon={
-                darkMode ? (
-                  <WbSunnyIcon style={{ color: "white" }} />
-                ) : (
-                  <DarkModeIcon style={{ color: "gray" }} />
-                )
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <div
+        className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${
+          darkMode 
+            ? `bg-gray-800/90 text-white` 
+            : `bg-white/90 text-black`
+        }`}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h1
+            style={{ fontFamily: "'Saira Condensed', sans-serif" }}
+            className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600"
+          >
+            TaskTame
+          </h1>
+          <Button
+            variant="contained"
+            size="small"
+            className="rounded-full"
+            sx={{
+              background: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+              boxShadow: 'none',
+              '&:hover': {
+                background: darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
               }
-              onClick={handleDarkModeToggle}
-              className="pl-2 float-right"
+            }}
+            onClick={handleDarkModeToggle}
+          >
+            {darkMode ? (
+              <WbSunnyIcon className="text-yellow-400" />
+            ) : (
+              <DarkModeIcon className="text-gray-600" />
+            )}
+          </Button>
+        </div>
+        <form onSubmit={toSubmit} className="mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="text"
+              className={`flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                darkMode 
+                  ? `bg-gray-700 border-gray-600 text-white` 
+                  : `bg-white border-gray-200 text-black`
+              }`}
+              placeholder="Add a new task..."
             />
-        
+            <button
+              type="submit"
+              className="px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity"
+            >
+              <div className="flex items-center gap-1">
+                <AddTaskIcon /> Add
+              </div>
+            </button>
           </div>
-          <form onSubmit={toSubmit} className="mb-4">
-            <div className="flex items-center mb-2">
-              <input
-                type="text"
-                className={`flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  darkMode ? `text-black` : `text-black`
-                }`}
-                placeholder="Add a new note"
-              />
-              <button
-                type="submit"
-                className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                <div className="flex">
-                  <AddTaskIcon className="pr-1" /> Add
-                </div>
-              </button>
-            </div>
-            <div className="flex items-center bg-white mb-2 border rounded-lg focus-within:ring-2 focus-within:ring-blue-500">
-              <SearchIcon className="ml-2 text-gray-500" />
-              <input
-                type="text"
-                onChange={handleChange}
-                placeholder="Search notes"
-                className={`flex-1 p-2 focus:outline-none ${
-                  darkMode ? `text-black` : `text-black`
-                }`}
-              />
-            </div>
-          </form>
-          {check && (
-            <Alert severity="warning" className="text-red-600 text-center mb-4">
-              {check}
-            </Alert>
-          )}
+          <div className={`flex items-center rounded-lg border ${
+            darkMode 
+              ? 'bg-gray-700 border-gray-600' 
+              : 'bg-white border-gray-200'
+          }`}>
+            <SearchIcon className="ml-3 text-gray-400" />
+            <input
+              type="text"
+              onChange={handleChange}
+              placeholder="Search tasks..."
+              className={`flex-1 p-3 rounded-lg focus:outline-none ${
+                darkMode 
+                  ? `bg-gray-700 text-white` 
+                  : `bg-white text-black`
+              }`}
+            />
+          </div>
+        </form>
+        {check && (
+          <Alert severity="warning" className="text-red-600 text-center mb-4">
+            {check}
+          </Alert>
+        )}
+        <div className="flex gap-2 mt-4">
           <Button
             size="small"
             startIcon={<ClearIcon />}
-            onClick={handleReset}
             sx={{
               display: reset || notes.length === 0 ? "none" : "inline-flex",
-              px: 1,
-              py: 1,
-              p: 0.5,
-              m: 1,
-              borderRadius: "0.5rem",
-              color: "#d32f2f",
-              "&:hover": {
-                backgroundColor: "#ef5350",
-                color: "black",
+              borderRadius: '9999px',
+              textTransform: 'none',
+              backgroundColor: darkMode ? 'rgba(239,83,80,0.1)' : 'rgba(239,83,80,0.1)',
+              color: '#ef5350',
+              '&:hover': {
+                backgroundColor: 'rgba(239,83,80,0.2)',
               },
-              border: "1px solid red",
             }}
+            onClick={handleReset}
           >
-            Clear all notes
+            Clear all
           </Button>
-
           {hasCompletedNotes() && (
             <Button
-              style={{ margin: "6px" }}
               sx={{
                 display: reset || notes.length === 0 ? "none" : "inline-flex",
-                px: 1,
-                py: 1,
-                p: 0.5,
-                borderRadius: "0.5rem",
-                color: "green",
-                "&:hover": {
-                  backgroundColor: "#66bb6a",
-                  color: "black",
+                borderRadius: '9999px',
+                textTransform: 'none',
+                backgroundColor: darkMode ? 'rgba(102,187,106,0.1)' : 'rgba(102,187,106,0.1)',
+                color: '#66bb6a',
+                '&:hover': {
+                  backgroundColor: 'rgba(102,187,106,0.2)',
                 },
-                border: "1px solid green",
               }}
-              variant="outlined"
-              color="success"
-              onClick={() => {
-                setShowCompleted(!showCompleted);
-              }}
+              onClick={() => setShowCompleted(!showCompleted)}
             >
               {showCompleted ? "Show all" : "Show Completed"}
             </Button>
           )}
-          <ul>
-            {filtered.map(({ note, index }) => (
-              <li
-                className="flex justify-between items-center p-2 border-b last:border-b-0"
-                key={index}
-              >
-                <div className="flex">
-                  <span className="pr-1">{index + 1}</span>
-                  <input
-                    type="checkbox"
-                    className="mr-2"
+        </div>
+        <ul className="space-y-3">
+          {filtered.map(({ note, index }) => (
+            <li
+              key={index}
+              className={`flex items-center justify-between rounded-xl p-4 transition-all ${
+                darkMode 
+                  ? 'bg-gray-700/50 hover:bg-gray-700' 
+                  : 'bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center flex-1 gap-2">
+                <div className="flex items-center min-w-[40px]">
+                  <div 
+                    className={`w-6 h-6 flex items-center justify-center rounded-full text-xs ${
+                      darkMode 
+                        ? 'bg-gray-600 text-gray-300' 
+                        : 'bg-gray-200 text-gray-600'
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <Checkbox
                     checked={completedNotes[index]}
                     onChange={() => handleCheckboxChange(index)}
+                    icon={<CircleOutlinedIcon />}
+                    checkedIcon={<CheckCircleIcon />}
+                    sx={{
+                      color: darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)',
+                      '&.Mui-checked': {
+                        color: '#10B981', // Modern green color
+                      },
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        transform: 'scale(1.1)',
+                        backgroundColor: 'transparent'
+                      },
+                      padding: '4px'
+                    }}
                   />
                 </div>
+                
                 {editing === index ? (
                   <BaseTextareaAutosize
-                    minRows={3}
+                    minRows={2}
                     placeholder="Edit here"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
+                    className={`w-full rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none ${
+                      darkMode 
+                        ? 'bg-gray-600 text-white' 
+                        : 'bg-white text-black'
+                    }`}
                     style={{
-                      color: darkMode ? "black" : "black",
-                      border: "2px solid green",
-                      padding: "8px",
-                      width: "100%",
+                      border: "1px solid rgba(99, 102, 241, 0.3)",
+                      resize: "none",
                     }}
                   />
                 ) : (
                   <span
-                    className={`flex-auto min-w-0 max-w-full break-words m-1 p-2  text-left ${
+                    className={`flex-1 text-base ${
                       completedNotes[index]
-                        ? "line-through font-bold  decoration-black decoration-3"
-                        : ""
+                        ? `line-through opacity-50 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`
+                        : ''
                     }`}
                   >
                     {note}
                   </span>
                 )}
-                <div className="flex">
-                  {editing === index ? (
-                    <IconButton
-                      onClick={() => handleSave(index)}
-                      size="small"
-                      sx={{ color: "#4caf50" }}
-                    >
-                      <SaveIcon />
-                    </IconButton>
-                  ) : (
-                    <IconButton
-                      onClick={() => handleEdit(index)}
-                      size="small"
-                      sx={{ color: "#1976d2" }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  )}
+              </div>
+
+              <div className="flex gap-1">
+                {editing === index ? (
                   <IconButton
-                    onClick={() => onDelete(note, index)}
+                    onClick={() => handleSave(index)}
                     size="small"
-                    sx={{ color: "#f44336" }}
+                    sx={{
+                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                      }
+                    }}
                   >
-                    <DeleteOutlineOutlinedIcon />
+                    <SaveIcon sx={{ fontSize: 20, color: '#10B981' }} />
                   </IconButton>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <Snackbar
-            open={snackbar.open}
-            autoHideDuration={3000}
-            onClose={handleCloseSnackbar}
-            message={snackbar.message}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          />
-        </div>
+                ) : (
+                  <IconButton
+                    onClick={() => handleEdit(index)}
+                    size="small"
+                    sx={{
+                      backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                      }
+                    }}
+                  >
+                    <EditIcon sx={{ fontSize: 20, color: '#3B82F6' }} />
+                  </IconButton>
+                )}
+                <IconButton
+                  onClick={() => onDelete(note, index)}
+                  size="small"
+                  sx={{
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    }
+                  }}
+                >
+                  <DeleteOutlineOutlinedIcon sx={{ fontSize: 20, color: '#EF4444' }} />
+                </IconButton>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          message={snackbar.message}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        />
       </div>
     </div>
   );
