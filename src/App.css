@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -40,4 +39,34 @@
 
 .read-the-docs {
   color: #888;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.install-bounce {
+  animation: bounce 2s infinite;
+}
+
+/* Add a pulsing effect when the button first appears */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.pulse-on-appear {
+  animation: pulse 2s ease-in-out;
 }
