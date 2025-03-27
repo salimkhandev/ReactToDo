@@ -70,3 +70,19 @@
 .pulse-on-appear {
   animation: pulse 2s ease-in-out;
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(-50%);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+  100% {
+    transform: translateY(0px) translateX(-50%);
+  }
+}
+
+.install-button-float {
+  animation: float 3s ease-in-out infinite;
+}

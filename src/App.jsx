@@ -18,7 +18,6 @@ import Snackbar from "@mui/material/Snackbar";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "./App.css"; // Make sure to import your CSS file
-import InstallPWA from './components/InstallPWA';
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -229,70 +228,6 @@ Swal.fire({
   };
 
   return (
-    <NotificationProvider>
-      <ContextProvider>
-        <div className="min-h-screen bg-gray-50">
-          <Navbar />
-          <main className="pt-14 md:pl-64">
-            <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-              <div
-                className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${
-                  darkMode 
-                    ? `bg-gray-800/90 text-white` 
-                    : `bg-white/90 text-black`
-                }`}
-              >
-                <div className="flex justify-between items-center mb-6">
-                  <h1
-                    style={{ fontFamily: "'Saira Condensed', sans-serif" }}
-                    className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600"
-                  >
-                    TaskTame
-                  </h1>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    className="rounded-full"
-                    sx={{
-                      background: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                      boxShadow: 'none',
-                      '&:hover': {
-                        background: darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-                      }
-                    }}
-                    onClick={handleDarkModeToggle}
-                  >
-                    {darkMode ? (
-                      <WbSunnyIcon className="text-yellow-400" />
-                    ) : (
-                      <DarkModeIcon className="text-gray-600" />
-                    )}
-                  </Button>
-                </div>
-                <form onSubmit={toSubmit} className="mb-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <input
-                      type="text"
-                      className={`flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                        darkMode 
-                          ? `bg-gray-700 border-gray-600 text-white` 
-                          : `bg-white border-gray-200 text-black`
-                      }`}
-                      placeholder="Add a new task..."
-                    />
-                    <button
-                      type="submit"
-                      className="px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity"
-                    >
-                      <div className="flex items-center gap-1">
-                        <AddTaskIcon /> Add
-                      </div>
-                    </button>
-                  </div>
-                  <div className={`flex items-center rounded-lg border ${
-                    darkMode 
-                      ? 'bg-gray-700 border-gray-600' 
-                      : 'bg-white border-gray-200'
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <div
         className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${
