@@ -1,4 +1,3 @@
-
 self.__WB_MANIFEST
 
 const CACHE_VERSION = 'v16';
@@ -7,20 +6,23 @@ const CACHE_NAME = `app-cache-${CACHE_VERSION}`;
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
-    '/offline.html',
-    '/main.js',
-    '/style.css',
+    '/manifest.json',
+    // Add your app's actual assets
+    '/icons/android-chrome-192x192.png',
+    '/icons/android-chrome-512x512.png',
+    '/icons/apple-touch-icon.png',
+    '/icons/favicon-16x16.png',
+    '/icons/favicon-32x32.png',
+    '/favicon.ico'
 ];
-
 
 // Install event: Cache assets
 self.addEventListener('install', (event) => {
     console.log('Service Worker installing.');
-    self.skipWaiting(); // Activate SW immediately
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(async (cache) => {
             console.log('🚀 Service Worker: Installation Started');
-            // Cache files one by one to handle failures gracefully
             for (const file of FILES_TO_CACHE) {
                 try {
                     await cache.add(new Request(file, { cache: 'reload' }));
@@ -34,7 +36,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activate event: Clean up old caches
+// Activate event remains the same
 self.addEventListener('activate', (event) => {
     console.log('Service Worker activating.');
     event.waitUntil(
@@ -50,49 +52,63 @@ self.addEventListener('activate', (event) => {
         })
     );
     console.log('💪 Service Worker: Activated');
-    return self.clients.claim(); // Take control immediately
+    return self.clients.claim();
 });
 
-
+// Updated fetch event handler with proper dynamic caching
 self.addEventListener('fetch', (event) => {
-    console.log('🚀 Service Worker: Fetch event triggered', event.request.url);
+    console.log('🚀 Fetch event:', event.request.url);
 
+    // Skip non-GET requests and non-same-origin requests
     if (
         !event.request.url.startsWith(self.location.origin) ||
-        event.request.url.startsWith('chrome-extension://') ||
         event.request.method !== 'GET'
     ) {
         return;
     }
 
-    if (event.request.url.toLowerCase().includes('/nonono')) {
-        console.log('❌ Not caching this page:', event.request.url);
-
-        return fetch(event.request);
-    }
-
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-
             if (cachedResponse) {
                 console.log('✅ Serving from Cache:', event.request.url);
                 return cachedResponse;
             }
 
-            return fetch(event.request).then((response) => {
-                const responseToCache = response.clone();
+            return fetch(event.request)
+                .then((networkResponse) => {
+                    // Check if we received a valid response
+                    if (!networkResponse || networkResponse.status !== 200) {
+                        console.log('❌ Invalid response:', event.request.url);
+                        return networkResponse;
+                    }
 
-                if (response.status === 200) {
-                    caches.open(CACHE_NAME).then((cache) => {
-                        // cache.put(event.request, responseToCache);
-                        console.log('📥 Cached after Network Fetch:', event.request.url);
-                    });
-                }
-                return response;
-            }).catch(() => {
-                console.log('❌ Network failed & No Cache:', event.request.url);
+                    // IMPORTANT: Clone the response before caching
+                    const responseToCache = networkResponse.clone();
 
-            });
+                    // Cache the fetched response
+                    caches.open(CACHE_NAME)
+                        .then((cache) => {
+                            cache.put(event.request, responseToCache); // Uncommented this line
+                            console.log('📥 Cached new resource:', event.request.url);
+                        })
+                        .catch((error) => {
+                            console.error('❌ Cache put failed:', error);
+                        });
+
+                    return networkResponse;
+                })
+                .catch((error) => {
+                    console.error('❌ Fetch failed:', error);
+                    // You might want to return a custom offline page here
+                    return caches.match('/offline.html');
+                });
         })
     );
+});
+
+// Optional: Add a message event handler for cache updates
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
