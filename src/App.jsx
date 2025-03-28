@@ -243,13 +243,27 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
-      <div
-        className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${darkMode
-            ? `bg-gray-800/90 text-white`
-            : `bg-white/90 text-black`
-          }`}
-      >
+    <div className="min-h-screen flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <div className={`relative p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${
+        darkMode ? `bg-gray-800/90 text-white` : `bg-white/90 text-black`
+      }`}>
+        {(deferredPrompt || isIOS) && (
+          <button
+            onClick={handleInstallClick}
+            className={`relative right-[-430px] top-[0px] flex items-center gap-2 px-6 py-3 rounded-full shadow-lg 
+              transition-all duration-300 transform hover:scale-105 active:scale-95
+              ${darkMode 
+                ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+              }`}
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm1 11h-2v-4h2v4zm0-6h-2V5h2v2z"/>
+            </svg>
+            Install TaskTame
+          </button>
+        )}
+
         <div className="flex justify-between items-center mb-6">
           <h1
             style={{ fontFamily: "'Saira Condensed', sans-serif" }}
@@ -474,48 +488,6 @@ export default function App() {
         {isIOS && (
           <p>📲 On iOS, tap &quot;Share&quot; → &quot;Add to Home Screen&quot; to install this PWA.</p>
         )}
-
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-          {isIOS ? (
-            <button
-              onClick={() => {
-                alert(
-                  'To install TaskTame on your iOS device:\n\n' +
-                  '1. Tap the Share button (rectangle with arrow) ↑\n' +
-                  '2. Scroll down and tap "Add to Home Screen"\n' +
-                  '3. Tap "Add" to confirm'
-                );
-              }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full shadow-lg 
-                transition-all duration-300 transform hover:scale-105 active:scale-95
-                ${darkMode 
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                }`}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
-                <path d="M10 12l-4-4h8z"/>
-              </svg>
-              Install on iOS
-            </button>
-          ) : deferredPrompt && (
-            <button
-              onClick={handleInstallClick}
-              className={`flex relative top-[-310px] items-center gap-2 px-6 py-3 rounded-full shadow-lg 
-                transition-all duration-300 transform hover:scale-105 active:scale-95
-                ${darkMode 
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                }`}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm1 11h-2v-4h2v4zm0-6h-2V5h2v2z"/>
-              </svg>
-              Install TaskTame
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
