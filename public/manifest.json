@@ -4,8 +4,6 @@
     "description": "A modern task management Progressive Web App built with React",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#1F2937",
-    "theme_color": "#3B82F6",
     "orientation": "portrait",
     "icons": [
         {
@@ -62,18 +60,36 @@
         {
             "name": "All Tasks",
             "url": "/",
-            "icons": [{ "src": "/icons/android-chrome-192x192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Completed Tasks",
             "url": "/?completed=true",
-            "icons": [{ "src": "/icons/android-chrome-192x192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "Add Task",
             "url": "/?add=true",
-            "icons": [{ "src": "/icons/android-chrome-192x192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icons/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ],
-    "permissions": ["notifications", "vibrate"]
-} 
+    "permissions": [
+        "notifications",
+        "vibrate"
+    ]
+}

@@ -23,21 +23,15 @@ export default function App() {
   const [notes, setNotes] = useState([]);
   const [check, setCheck] = useState();
   const [search, setSearch] = useState("");
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isIOS, setIsIOS] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
-
-
- const storedDarkMode = localStorage.getItem('darkMode');
+    const storedDarkMode = localStorage.getItem('darkMode');
     if (storedDarkMode !== null) {
-
-      console.log("this is the stored value",storedDarkMode);
+      console.log("this is the stored value", storedDarkMode);
       return storedDarkMode === 'true';
-
-
     }
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-
-
   });
   const [reset, setReset] = useState(false);
 
@@ -47,8 +41,39 @@ export default function App() {
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [showCompleted, setShowCompleted] = useState(false);
 
-  useEffect(() => {
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('PWA installed');
+      }
+      setDeferredPrompt(null);
+    } catch (error) {
+      console.error('Error installing app:', error);
+    }
+  };
 
+  useEffect(() => {
+    // Detect iOS (since it does not support beforeinstallprompt)
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+
+    // Listen for beforeinstallprompt event
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault(); // Prevent auto prompt
+      setDeferredPrompt(event);
+    });
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", (event) =>
+        setDeferredPrompt(null)
+      );
+    };
+  }, []);
+
+  useEffect(() => {
     const locals = localStorage.getItem("ReactTodo");
     const checkCompleted = localStorage.getItem("checkCompleted");
     if (locals) {
@@ -87,48 +112,41 @@ export default function App() {
   };
 
   const onDelete = (note, key) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this note?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        title: "text-lg", // Tailwind class for larger text
+        content: "text-sm", // Tailwind class for smaller text
+        popup: "w-80", // Tailwind class for width
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const deletes = notes.filter((item) => item !== note);
+        setNotes(deletes);
 
+        localStorage.setItem("ReactTodo", deletes.join(","));
+        setCompletedNotes((prev) => {
+          const updateState = {
+            ...prev,
+            [key]: false,
+          };
 
-Swal.fire({
-  title: "Are you sure?",
-  text: "Do you want to delete this note?",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, delete it!",
-  customClass: {
-    title: "text-lg", // Tailwind class for larger text
-    content: "text-sm", // Tailwind class for smaller text
-    popup: "w-80", // Tailwind class for width
-  },
-}).then((result) => {
-  if (result.isConfirmed) {
-    
-   const deletes = notes.filter((item) => item !== note);
-   setNotes(deletes);
+          localStorage.setItem("checkCompleted", JSON.stringify(updateState));
+          return updateState;
+        });
 
-   localStorage.setItem("ReactTodo", deletes.join(","));
-   setCompletedNotes((prev) => {
-     const updateState = {
-       ...prev,
-       [key]: false,
-     };
-
-     localStorage.setItem("checkCompleted", JSON.stringify(updateState));
-     return updateState;
-   });
-
-   setSnackbar({ open: true, message: "Note deleted" });
-  
-  }
-});
-
-
+        setSnackbar({ open: true, message: "Note deleted" });
+      }
+    });
   };
 
   const handleCheckboxChange = (key) => {
-
     setCompletedNotes((prev) => {
       const updateState = {
         ...prev,
@@ -156,8 +174,6 @@ Swal.fire({
       return note.toLowerCase().includes(search.toLowerCase());
     });
 
-
-  
   console.log("The filtered items are ", filtered);
 
   const toSubmit = (e) => {
@@ -224,17 +240,15 @@ Swal.fire({
   // Helper function to check if there are any completed notes
   const hasCompletedNotes = () => {
     return Object.values(completedNotes).some((completed) => completed);
-    
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
       <div
-        className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${
-          darkMode 
-            ? `bg-gray-800/90 text-white` 
+        className={`p-8 rounded-xl shadow-2xl w-full max-w-md backdrop-blur-sm ${darkMode
+            ? `bg-gray-800/90 text-white`
             : `bg-white/90 text-black`
-        }`}
+          }`}
       >
         <div className="flex justify-between items-center mb-6">
           <h1
@@ -267,11 +281,10 @@ Swal.fire({
           <div className="flex items-center gap-2 mb-4">
             <input
               type="text"
-              className={`flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                darkMode 
-                  ? `bg-gray-700 border-gray-600 text-white` 
+              className={`flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${darkMode
+                  ? `bg-gray-700 border-gray-600 text-white`
                   : `bg-white border-gray-200 text-black`
-              }`}
+                }`}
               placeholder="Add a new task..."
             />
             <button
@@ -283,21 +296,19 @@ Swal.fire({
               </div>
             </button>
           </div>
-          <div className={`flex items-center rounded-lg border ${
-            darkMode 
-              ? 'bg-gray-700 border-gray-600' 
+          <div className={`flex items-center rounded-lg border ${darkMode
+              ? 'bg-gray-700 border-gray-600'
               : 'bg-white border-gray-200'
-          }`}>
+            }`}>
             <SearchIcon className="ml-3 text-gray-400" />
             <input
               type="text"
               onChange={handleChange}
               placeholder="Search tasks..."
-              className={`flex-1 p-3 rounded-lg focus:outline-none ${
-                darkMode 
-                  ? `bg-gray-700 text-white` 
+              className={`flex-1 p-3 rounded-lg focus:outline-none ${darkMode
+                  ? `bg-gray-700 text-white`
                   : `bg-white text-black`
-              }`}
+                }`}
             />
           </div>
         </form>
@@ -314,6 +325,7 @@ Swal.fire({
               display: reset || notes.length === 0 ? "none" : "inline-flex",
               borderRadius: '9999px',
               textTransform: 'none',
+              marginBottom:'23px',
               backgroundColor: darkMode ? 'rgba(239,83,80,0.1)' : 'rgba(239,83,80,0.1)',
               color: '#ef5350',
               '&:hover': {
@@ -346,20 +358,18 @@ Swal.fire({
           {filtered.map(({ note, index }) => (
             <li
               key={index}
-              className={`flex items-center justify-between rounded-xl p-4 transition-all ${
-                darkMode 
-                  ? 'bg-gray-700/50 hover:bg-gray-700' 
+              className={`flex items-center justify-between rounded-xl p-4 transition-all ${darkMode
+                  ? 'bg-gray-700/50 hover:bg-gray-700'
                   : 'bg-gray-50 hover:bg-gray-100'
-              }`}
+                }`}
             >
               <div className="flex items-center flex-1 gap-2">
                 <div className="flex items-center min-w-[40px]">
-                  <div 
-                    className={`w-6 h-6 flex items-center justify-center rounded-full text-xs ${
-                      darkMode 
-                        ? 'bg-gray-600 text-gray-300' 
+                  <div
+                    className={`w-6 h-6 flex items-center justify-center rounded-full text-xs ${darkMode
+                        ? 'bg-gray-600 text-gray-300'
                         : 'bg-gray-200 text-gray-600'
-                    }`}
+                      }`}
                   >
                     {index + 1}
                   </div>
@@ -382,18 +392,17 @@ Swal.fire({
                     }}
                   />
                 </div>
-                
+
                 {editing === index ? (
                   <BaseTextareaAutosize
                     minRows={2}
                     placeholder="Edit here"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                    className={`w-full rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none ${
-                      darkMode 
-                        ? 'bg-gray-600 text-white' 
+                    className={`w-full rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none ${darkMode
+                        ? 'bg-gray-600 text-white'
                         : 'bg-white text-black'
-                    }`}
+                      }`}
                     style={{
                       border: "1px solid rgba(99, 102, 241, 0.3)",
                       resize: "none",
@@ -401,11 +410,10 @@ Swal.fire({
                   />
                 ) : (
                   <span
-                    className={`flex-1 text-base ${
-                      completedNotes[index]
+                    className={`flex-1 text-base ${completedNotes[index]
                         ? `line-through opacity-50 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`
                         : ''
-                    }`}
+                      }`}
                   >
                     {note}
                   </span>
@@ -463,6 +471,51 @@ Swal.fire({
           message={snackbar.message}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         />
+        {isIOS && (
+          <p>📲 On iOS, tap &quot;Share&quot; → &quot;Add to Home Screen&quot; to install this PWA.</p>
+        )}
+
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+          {isIOS ? (
+            <button
+              onClick={() => {
+                alert(
+                  'To install TaskTame on your iOS device:\n\n' +
+                  '1. Tap the Share button (rectangle with arrow) ↑\n' +
+                  '2. Scroll down and tap "Add to Home Screen"\n' +
+                  '3. Tap "Add" to confirm'
+                );
+              }}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full shadow-lg 
+                transition-all duration-300 transform hover:scale-105 active:scale-95
+                ${darkMode 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+                <path d="M10 12l-4-4h8z"/>
+              </svg>
+              Install on iOS
+            </button>
+          ) : deferredPrompt && (
+            <button
+              onClick={handleInstallClick}
+              className={`flex relative top-[-310px] items-center gap-2 px-6 py-3 rounded-full shadow-lg 
+                transition-all duration-300 transform hover:scale-105 active:scale-95
+                ${darkMode 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm1 11h-2v-4h2v4zm0-6h-2V5h2v2z"/>
+              </svg>
+              Install TaskTame
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
