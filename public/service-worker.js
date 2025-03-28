@@ -1,13 +1,12 @@
 self.__WB_MANIFEST
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = `app-cache-${CACHE_VERSION}`;
 
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
     '/manifest.json',
-    // Add your app's actual assets
     '/icons/android-chrome-192x192.png',
     '/icons/android-chrome-512x512.png',
     '/icons/apple-touch-icon.png',

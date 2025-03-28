@@ -250,7 +250,7 @@ export default function App() {
         {(deferredPrompt || isIOS) && (
           <button
             onClick={handleInstallClick}
-            className={`relative right-[-430px] top-[0px] flex items-center gap-2 px-6 py-3 rounded-full shadow-lg 
+            className={`relative top-[0px] mb-[20px] flex items-center gap-2 px-6 py-3 rounded-full shadow-lg 
               transition-all duration-300 transform hover:scale-105 active:scale-95
               ${darkMode 
                 ? 'bg-gradient-to-r from-blue-600 to-purple-700 text-white' 
@@ -340,6 +340,7 @@ export default function App() {
               borderRadius: '9999px',
               textTransform: 'none',
               marginBottom:'23px',
+              paddingRight:'20px',
               backgroundColor: darkMode ? 'rgba(239,83,80,0.1)' : 'rgba(239,83,80,0.1)',
               color: '#ef5350',
               '&:hover': {
@@ -356,6 +357,7 @@ export default function App() {
                 display: reset || notes.length === 0 ? "none" : "inline-flex",
                 borderRadius: '9999px',
                 textTransform: 'none',
+                marginBottom:'23px',
                 backgroundColor: darkMode ? 'rgba(102,187,106,0.1)' : 'rgba(102,187,106,0.1)',
                 color: '#66bb6a',
                 '&:hover': {
